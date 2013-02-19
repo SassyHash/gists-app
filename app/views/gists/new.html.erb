@@ -1,26 +1,122 @@
 <h1> new gist.. </h1>
 
 <%= simple_form_for @gist do |f| %>
+  <div class="title">
   <%= f.input :title %>
-
-  <div class="gist-file-form">
-  <%= f.simple_fields_for :gistfiles do |t| %>
-    <%= t.input :body %>
-    <a href='#'>x</a>
-  <% end %>
   </div>
+
+  <div class="selected">
+    Tags Selected:
+  </div>
+  <div class="tag">
+    Tag:<input type="text" class="taginput">
+    <ul>
+    </ul>
+  </div>
+
+
+
+  <div class="hiddentags">
+    <%#= f.simple_fields_for :taggings do |z| %>
+      <%= f.association :tags, :as => :check_boxes, :label_method => :label %>
+    <%# end %>
+  </div>
+
+
+  <div class="chosenlist"></div>
+  <div class="make-form">
+
+    <%= f.simple_fields_for :gistfiles do |t| %>
+    <div class="gist-file-form">
+      <%= t.input :body %>
+      <a href='#' class="remove">x</a>
+    </div>
+    <% end %>
+  </div>
+  <a href='#' class="add">+</a>
 
   <%= f.submit "GO" %>
 <% end %>
 
+<ul class="taglist">
+
+</ul>
+
+
+
+
+
+
+
 <script type="text/javascript">
-$(function () {
-  $('a').each(function(x) {
-    $('a')[x].bind('click', function(){
-      // $(this).parent
+  var pastTags = []
+  var pastTagIds = []
+
+  $.getJSON(
+    "/tags.json",
+    function(data) {
+      data.forEach(function(tag) {
+        pastTags.push(tag.label);
+        pastTagIds.push(tag.id);
+        console.log(pastTags);
+      })
+    }
+  )
+
+  $(function () {
+    $('.remove').click(function() {
+      $(this).parent().empty()
+    });
+
+    c = $('.gist-file-form').first().clone();
+    $('.add').click(function() {
+
+      id = 'gist[gistfiles_attributes][' +
+            new Date().getTime() + '][body]'
+
+      c.find('textarea').attr('name', id)
+      $('.make-form').append(c);
+
+      $('.remove').click(function() {
+        $(this).parent().empty();
+      });
+    });
+
+    $('.tag ul').on('click', 'li', function() {
+      $('.selected').append(this);
+      var index = pastTags.indexOf($(this).text());
+      var id = pastTagIds[index];
+      console.log(id);
+      var hiddentag = $('<input/>',{type:'hidden', value:id, name:"gist[tag_ids][]"});
+      $('.hiddentags').append(hiddentag);
+    });
+
+    $('.taginput').keyup(function() {
+      $('.tag ul').empty();
+      var input = $(this).val();
+      console.log(input);
+      pastTags.forEach(function(tag) {
+        if (tag.indexOf(input) != -1) {
+          console.log("found word");
+          $('.tag ul').append('<li>'+tag+'</li>')
+
+        }
+      })
     })
+
+    $('.taginput').focusout(function() {
+      setTimeout( function() {
+        $('.tag ul').empty()
+      }, 150)
+    })
+
+
+
+
+
+    // $('.chosenlist').append(x)
   });
-});
+
 
 
 

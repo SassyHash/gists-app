@@ -26,3 +26,35 @@
 .favorited .unfavform {
   display: block;
 }
+
+.tagz {
+  width: 60px;
+  padding: 10px;
+  margin-left: 20px;
+  background: blue;
+  color: white;
+  border-radius: 10px;
+}
+
+.tagz:hover {
+  background: black;
+  cursor: pointer;
+}
+
+.upvote:hover, .downvote:hover {
+  cursor: pointer;
+}
+
+.upvote{
+  width: 20px;
+  position: absolute;
+  top: 52px;
+  left: 100px;
+}
+
+.downvote{
+  width: 20px;
+  position: absolute;
+  top: 62px;
+  left: 100px;
+}

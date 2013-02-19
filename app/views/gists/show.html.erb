@@ -1,11 +1,25 @@
 <%= link_to 'home', gists_path %>
-<h1><%= @gist.title %></h1>
+<br>
+<h1 data-gist-id="<%= @gist.id %>" id="gisttitle"><%= @gist.title %></h1>
+<span class="vote" data-points="<%=@gist.votes.length%>" id="gistpoints"><%= @gist.votes.length %></span>
 
+<% @gist.tags.each do |t| %>
+  <span class="tagz"><%= t.label %></span>
+<% end %>
+<br><br><br>
 <div class="buttons <%='favorited' if @has %>">
   <%= button_to "fav", gist_favorite_path(@gist.id), :remote => true, :form_class => "favform" %>
-  <%= button_to "un-fav", gist_favorite_path(@gist.id), :method => "delete", :remote => true, :form_class => "unfavform" %>
+  <%= button_to "un-fav", gist_favorite_path(@gist.id),
+                :method => "delete", :remote => true, :form_class => "unfavform" %>
 </div>
 
+<br><br>
+<div class="upvote">
+  ^
+</div>
+<div class="downvote">
+  v
+</div>
 
 <script type="text/javascript">
   $(function () {
@@ -14,11 +28,26 @@
       $(this).closest(".buttons").addClass("favorited");
     });
 
-
     $('.unfavform').bind('ajax:success', function(){
       $(this).closest(".buttons").removeClass("favorited");
     })
+
+    $('.upvote').bind('click', function () {
+      $('.upvote').empty();
+      $('.downvote').empty();
+      $.post("/votes.json", {
+        vote: {gist_id: $('#gisttitle').attr('data-gist-id'), point_addition: 1}
+      }, function() {
+        console.log("hi");
+        var points = $('#gistpoints').attr('data-points');
+        var new_points = points.parseInt()+1;
+        $('.vote').html(new_points);
+      })
+    })
+
+    $('.downvote').bind('click', function () {
+      $('.upvote').empty();
+      $('.downvote').empty();
+    })
   });
-
-
 </script>
