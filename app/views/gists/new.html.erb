@@ -1,0 +1,28 @@
+<h1> new gist.. </h1>
+
+<%= simple_form_for @gist do |f| %>
+  <%= f.input :title %>
+
+  <div class="gist-file-form">
+  <%= f.simple_fields_for :gistfiles do |t| %>
+    <%= t.input :body %>
+    <a href='#'>x</a>
+  <% end %>
+  </div>
+
+  <%= f.submit "GO" %>
+<% end %>
+
+<script type="text/javascript">
+$(function () {
+  $('a').each(function(x) {
+    $('a')[x].bind('click', function(){
+      // $(this).parent
+    })
+  });
+});
+
+
+
+
+</script>
